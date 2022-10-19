@@ -21,13 +21,22 @@ session_start();
 
     if($numExistRows>0){
         $exists=true;
-        echo "Username Already Exists";
+        echo "<script>alert('Username Already Exists')</script>";
     }
     else{
         if(!empty($mail) && !empty($username) && !empty($password) && !is_numeric($username))
         {
             //save to database
-
+            if(!filter_var($mail, FILTER_VALIDATE_EMAIL)){
+              echo "<script>alert('Enter a valid e-mail!')</script>";
+            }
+            else if(!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\~?!@#\$%\^&\*])(?=.{8,})/', $password)){
+              echo "<script>alert('Password should have at least 1 uppercase, lowercase character and digit!')</script>";
+            }
+            else if(strlen($password)<8){
+              echo "<script>alert('Minimum length of password should be 8!')</script>";
+            }
+            else{
             $query = "insert into student (e_mail, username,password) values ('$mail', '$username','$hashPass')";
 
             mysqli_query($con, $query);
@@ -36,13 +45,12 @@ session_start();
             //redirect
             header("Location: login.php");
             die;
+            }
+
         }
       }
   }
 
-  else{
-    echo "Please Enter Some Valid Information!";
-}
 
 ?>
 
